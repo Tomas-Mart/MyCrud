@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактировать пользователя</title>
+    <style>
+        /* Ваши стили */
+    </style>
+</head>
+<body>
+<h1>Редактировать пользователя</h1>
+
+<form th:action="@{/users/update}" method="post">
+    <input type="hidden" name="id" th:value="${user.id}">
+
+    <div>
+        <label>Имя: <input type="text" th:value="${user.name}" name="name"></label>
+    </div>
+
+    <button type="submit">Обновить</button>
+</form>
+</body>
+</html>

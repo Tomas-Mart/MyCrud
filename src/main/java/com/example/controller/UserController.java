@@ -2,11 +2,11 @@ package com.example.controller;
 
 import com.example.model.User;
 import com.example.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 
@@ -14,48 +14,77 @@ import javax.validation.Valid;
 @RequestMapping("/users")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping("/")
+    public String home() {
+        return "redirect:/users";
+    }
 
     @GetMapping
-    public String getAllUsers(Model model) {
+    public String list(Model model) {
         model.addAttribute("users", userService.getAllUsers());
-        return "users";
+        return "list";
     }
 
     @GetMapping("/add")
-    public String showAddForm(Model model) {
+    public String addForm(Model model) {
         model.addAttribute("user", new User());
-        return "add-user";
+        return "add";
     }
 
     @PostMapping("/add")
-    public String addUser(@Valid @ModelAttribute("user") User user, BindingResult result, Model model) {
+    public String add(@Valid @ModelAttribute("user") User user,
+                      BindingResult result,
+                      RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
-            return "add-user"; // Возвращаем на страницу с ошибками
+            return "add";
         }
         userService.saveUser(user);
+        redirectAttributes.addFlashAttribute("success", "Пользователь успешно добавлен");
         return "redirect:/users";
     }
 
     @GetMapping("/edit")
-    public String showEditForm(@RequestParam Long id, Model model) {
-        model.addAttribute("user", userService.getUserById(id));
-        return "edit-user";
+    public String editForm(@RequestParam("id") Long id,
+                           Model model,
+                           RedirectAttributes redirectAttributes) {
+        User user = userService.getUserById(id);
+        if (user == null) {
+            redirectAttributes.addFlashAttribute("error", "Пользователь не найден");
+            return "redirect:/users";
+        }
+        model.addAttribute("user", user);
+        return "edit";
     }
 
     @PostMapping("/update")
-    public String updateUser(@Valid @ModelAttribute("user") User user, BindingResult result, Model model) {
+    public String update(@RequestParam("id") Long id,
+                         @Valid @ModelAttribute("user") User user,
+                         BindingResult result,
+                         RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
-            return "edit-user"; // Возвращаем на страницу с ошибками
+            return "edit";
         }
+        user.setId(id);
         userService.updateUser(user);
+        redirectAttributes.addFlashAttribute("success", "Пользователь успешно обновлён");
         return "redirect:/users";
     }
 
-    @PostMapping("/delete")
-    public String deleteUser(@RequestParam Long id) {
-        userService.deleteUser(id);
+    @GetMapping("/delete")
+    public String delete(@RequestParam("id") Long id,
+                         RedirectAttributes redirectAttributes) {
+        try {
+            userService.deleteUser(id);
+            redirectAttributes.addFlashAttribute("success", "Пользователь успешно удалён");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Ошибка при удалении пользователя");
+        }
         return "redirect:/users";
     }
 }

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавить пользователя</title>
+    <style>
+        /* Ваши стили */
+    </style>
+</head>
+<body>
+<h1>Добавить пользователя</h1>
+
+<form th:action="@{/users/add}" method="post">
+    <div>
+        <label>Имя: <input type="text" name="name"></label>
+    </div>
+
+    <button type="submit">Сохранить</button>
+</form>
+</body>
+</html>

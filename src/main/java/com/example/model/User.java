@@ -13,6 +13,7 @@ public class User {
     private Long id;
 
     @NotBlank(message = "Имя не может быть пустым")
+    @Size(min = 2, max = 50, message = "Имя должно содержать от 2 до 50 символов")
     @Pattern(regexp = "^[a-zA-Zа-яА-Я\\s]+$", message = "Имя может содержать только буквы и пробелы")
     @Column(nullable = false)
     private String name;
@@ -23,13 +24,25 @@ public class User {
     private String email;
 
     @Min(value = 1, message = "Возраст должен быть больше 0")
+    @Max(value = 120, message = "Возраст должен быть меньше 120")
     @Column(nullable = false)
     private int age;
 
     @NotBlank(message = "Пароль не может быть пустым")
-    @Size(min = 6, message = "Пароль должен содержать минимум 6 символов")
+    @Size(min = 6, max = 100, message = "Пароль должен содержать от 6 до 100 символов")
     @Column(nullable = false)
     private String password;
+
+    // Конструкторы
+    public User() {
+    }
+
+    public User(String name, String email, int age, String password) {
+        this.name = name;
+        this.email = email;
+        this.age = age;
+        this.password = password;
+    }
 
     // Геттеры и сеттеры
     public Long getId() {
@@ -72,7 +85,7 @@ public class User {
         this.password = password;
     }
 
-    // Переопределение equals, hashCode и toString
+    // equals, hashCode, toString
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
