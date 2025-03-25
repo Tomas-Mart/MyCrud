@@ -6,18 +6,15 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
-public class AppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+public class AppInit extends AbstractAnnotationConfigDispatcherServletInitializer {
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         try {
-            // Настройка кодировки UTF-8
             servletContext.setRequestCharacterEncoding("UTF-8");
             servletContext.setResponseCharacterEncoding("UTF-8");
-
             super.onStartup(servletContext);
 
-            // Дополнительные настройки DispatcherServlet
             ServletRegistration registration = servletContext.getServletRegistration(DEFAULT_SERVLET_NAME);
             if (registration != null) {
                 registration.setInitParameter("throwExceptionIfNoHandlerFound", "true");
@@ -35,7 +32,7 @@ public class AppInitializer extends AbstractAnnotationConfigDispatcherServletIni
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[]{WebConfig.class};
+        return null; // Все конфигурации в одном классе
     }
 
     @Override
