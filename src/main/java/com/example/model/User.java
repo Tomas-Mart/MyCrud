@@ -14,7 +14,7 @@ public class User {
 
     @NotBlank(message = "Имя не может быть пустым")
     @Size(min = 2, max = 50, message = "Имя должно содержать от 2 до 50 символов")
-    @Pattern(regexp = "^[a-zA-Zа-яА-Я\\s]+$", message = "Имя может содержать только буквы и пробелы")
+    @Pattern(regexp = "^[a-zA-Zа-яА-Я\\s-]+$", message = "Имя может содержать только буквы, пробелы и дефисы")
     @Column(nullable = false)
     private String name;
 
@@ -26,90 +26,43 @@ public class User {
     @Min(value = 1, message = "Возраст должен быть больше 0")
     @Max(value = 120, message = "Возраст должен быть меньше 120")
     @Column(nullable = false)
-    private int age;
+    private Integer age;
 
-    @NotBlank(message = "Пароль не может быть пустым")
-    @Size(min = 6, max = 100, message = "Пароль должен содержать от 6 до 100 символов")
+    @NotBlank(message = "Город не может быть пустым")
+    @Size(min = 2, max = 50, message = "Название города должно содержать от 2 до 50 символов")
     @Column(nullable = false)
-    private String password;
+    private String city;
 
-    // Конструкторы
-    public User() {
-    }
+    // Геттеры, сеттеры, equals, hashCode, toString
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public Integer getAge() { return age; }
+    public void setAge(Integer age) { this.age = age; }
+    public String getCity() { return city; }
+    public void setCity(String city) { this.city = city; }
 
-    public User(String name, String email, int age, String password) {
-        this.name = name;
-        this.email = email;
-        this.age = age;
-        this.password = password;
-    }
-
-    // Геттеры и сеттеры
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    // equals, hashCode, toString
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return age == user.age &&
-                Objects.equals(id, user.id) &&
-                Objects.equals(name, user.name) &&
-                Objects.equals(email, user.email) &&
-                Objects.equals(password, user.password);
+        return Objects.equals(id, user.id) &&
+                Objects.equals(email, user.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email, age, password);
+        return Objects.hash(id, email);
     }
 
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", age=" + age +
-                '}';
+        return "User{" + "id=" + id + ", name='" + name + '\'' +
+                ", email='" + email + '\'' + ", age=" + age +
+                ", city='" + city + '\'' + '}';
     }
 }

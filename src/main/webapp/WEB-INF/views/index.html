@@ -12,48 +12,54 @@
     .header {
       margin-bottom: 30px;
     }
-    .nav-links {
-      margin: 20px 0;
-    }
     .btn {
       display: inline-block;
-      padding: 8px 16px;
-      background-color: #4CAF50;
+      padding: 10px 20px;
+      background: #4CAF50;
       color: white;
       text-decoration: none;
-      border-radius: 4px;
-      margin-right: 10px;
-    }
-    .btn:hover {
-      background-color: #45a049;
+      border-radius: 5px;
+      margin: 10px 0;
     }
     .alert {
       padding: 10px;
-      background-color: #f8f9fa;
-      border: 1px solid #ddd;
-      margin-bottom: 20px;
+      margin: 10px 0;
+      border-radius: 4px;
+    }
+    .success {
+      background: #dff0d8;
+      color: #3c763d;
+      border: 1px solid #d6e9c6;
+    }
+    .error {
+      background: #f2dede;
+      color: #a94442;
+      border: 1px solid #ebccd1;
+    }
+    .info-section {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 4px;
     }
   </style>
 </head>
 <body>
 <div class="header">
-  <h1>Добро пожаловать в систему управления пользователями</h1>
-  <p>Это главная страница приложения для работы с пользователями</p>
+  <h1>Система управления пользователями</h1>
+  <p>Добро пожаловать в систему управления пользователями</p>
 </div>
 
-<!-- Сообщения через параметры запроса -->
-<div th:if="${param.success}" class="alert" th:text="${param.success[0]}"></div>
-<div th:if="${param.error}" class="alert" th:text="${param.error[0]}"></div>
-
-<div class="nav-links">
-  <a th:href="@{/users/list}" class="btn">Просмотреть всех пользователей</a>
-  <a th:href="@{/users/add}" class="btn">Добавить нового пользователя</a>
-</div>
+<!-- Сообщения -->
+<div th:if="${param.success}" class="alert success"
+     th:text="${param.success[0]}"></div>
+<div th:if="${param.error}" class="alert error"
+     th:text="${param.error[0]}"></div>
 
 <div class="info-section">
-  <h2>Статистика</h2>
-  <p>Всего пользователей в системе: <span th:text="${userCount}">0</span></p>
-  <p>Последнее обновление: <span th:text="${#dates.format(lastUpdate, 'dd.MM.yyyy HH:mm')}">дата</span></p>
+  <p>Всего пользователей в системе: <strong th:text="${userCount}">0</strong></p>
 </div>
+
+<a th:href="@{/users}" class="btn">Перейти к управлению пользователями</a>
 </body>
 </html>

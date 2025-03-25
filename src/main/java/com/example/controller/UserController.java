@@ -11,7 +11,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 
 @Controller
-@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
@@ -21,69 +20,60 @@ public class UserController {
     }
 
     @GetMapping("/")
-    public String home() {
-        return "redirect:/index";
+    public String home(Model model) {
+        model.addAttribute("userCount", userService.getAllUsers().size());
+        return "index";
     }
 
-    @GetMapping
-    public String list(Model model) {
+    @GetMapping("/users")
+    public String showUsers(Model model) {
         model.addAttribute("users", userService.getAllUsers());
-        return "list";
-    }
-
-    @GetMapping("/add")
-    public String addForm(Model model) {
-        model.addAttribute("user", new User());
-        return "add";
-    }
-
-    @PostMapping("/add")
-    public String add(@Valid @ModelAttribute("user") User user,
-                      BindingResult result,
-                      RedirectAttributes redirectAttributes) {
-        if (result.hasErrors()) {
-            return "add";
+        if (!model.containsAttribute("user")) {
+            model.addAttribute("user", new User());
         }
-        userService.saveUser(user);
-        redirectAttributes.addFlashAttribute("success", "Пользователь успешно добавлен");
-        return "redirect:/users";
+        return "users";
     }
 
-    @GetMapping("/edit")
-    public String editForm(@RequestParam("id") Long id,
-                           Model model,
+    @PostMapping("/users/save")
+    public String saveUser(@Valid @ModelAttribute("user") User user,
+                           BindingResult result,
                            RedirectAttributes redirectAttributes) {
-        User user = userService.getUserById(id);
-        if (user == null) {
-            redirectAttributes.addFlashAttribute("error", "Пользователь не найден");
+
+        if (result.hasErrors()) {
+            redirectAttributes.addFlashAttribute(
+                    "org.springframework.validation.BindingResult.user", result);
+            redirectAttributes.addFlashAttribute("user", user);
             return "redirect:/users";
         }
-        model.addAttribute("user", user);
-        return "edit";
-    }
 
-    @PostMapping("/update")
-    public String update(@RequestParam("id") Long id,
-                         @Valid @ModelAttribute("user") User user,
-                         BindingResult result,
-                         RedirectAttributes redirectAttributes) {
-        if (result.hasErrors()) {
-            return "edit";
+        try {
+            if (user.getId() == null) {
+                userService.saveUser(user);
+                redirectAttributes.addFlashAttribute(
+                        "success", "Пользователь успешно создан");
+            } else {
+                userService.updateUser(user);
+                redirectAttributes.addFlashAttribute(
+                        "success", "Пользователь успешно обновлён");
+            }
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            redirectAttributes.addFlashAttribute("user", user);
         }
-        user.setId(id);
-        userService.updateUser(user);
-        redirectAttributes.addFlashAttribute("success", "Пользователь успешно обновлён");
+
         return "redirect:/users";
     }
 
-    @GetMapping("/delete")
-    public String delete(@RequestParam("id") Long id,
-                         RedirectAttributes redirectAttributes) {
+    @PostMapping("/users/delete")
+    public String deleteUser(@RequestParam Long id,
+                             RedirectAttributes redirectAttributes) {
         try {
             userService.deleteUser(id);
-            redirectAttributes.addFlashAttribute("success", "Пользователь успешно удалён");
+            redirectAttributes.addFlashAttribute(
+                    "success", "Пользователь успешно удалён");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Ошибка при удалении пользователя");
+            redirectAttributes.addFlashAttribute(
+                    "error", "Ошибка при удалении пользователя");
         }
         return "redirect:/users";
     }

@@ -2,7 +2,6 @@ package com.example.service;
 
 import com.example.model.User;
 import com.example.repository.UserRepository;
-import org.springframework.aop.framework.AopContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,33 +16,43 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    @Transactional(readOnly = true) // Только для чтения
+    @Transactional(readOnly = true)
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    @Transactional(readOnly = true) // Только для чтения
+    @Transactional(readOnly = true)
     public User getUserById(Long id) {
-        return userRepository.findById(id);
+        return userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Пользователь не найден"));
     }
 
-    @Transactional // Для операций записи
+    @Transactional
     public void saveUser(User user) {
+        validateEmailUniqueness(user.getEmail());
         userRepository.save(user);
     }
 
-    @Transactional // Для операций записи
+    @Transactional
     public void updateUser(User user) {
+        User existingUser = getUserById(user.getId());
+
+        if (!existingUser.getEmail().equals(user.getEmail())) {
+            validateEmailUniqueness(user.getEmail());
+        }
+
         userRepository.update(user);
     }
 
-    public void addUser(User user) {
-        // Вызов через прокси
-        ((UserService) AopContext.currentProxy()).saveUser(user);
+    @Transactional
+    public void deleteUser(Long id) {
+        User user = getUserById(id);
+        userRepository.delete(user.getId());
     }
 
-    @Transactional // Для операций записи
-    public void deleteUser(Long id) {
-        userRepository.delete(id);
+    private void validateEmailUniqueness(String email) {
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new IllegalStateException("Email уже используется");
+        }
     }
 }
