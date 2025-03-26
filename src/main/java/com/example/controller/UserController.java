@@ -56,7 +56,7 @@ public class UserController {
                 redirectAttributes.addFlashAttribute(
                         "success", "Пользователь успешно обновлён");
             }
-        } catch (IllegalStateException e) {
+        } catch (IllegalStateException | IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             redirectAttributes.addFlashAttribute("user", user);
         }
@@ -71,6 +71,8 @@ public class UserController {
             userService.deleteUser(id);
             redirectAttributes.addFlashAttribute(
                     "success", "Пользователь успешно удалён");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute(
                     "error", "Ошибка при удалении пользователя");

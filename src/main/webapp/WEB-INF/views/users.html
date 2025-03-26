@@ -202,6 +202,8 @@
 <script>
     function fillForm(button) {
         const form = document.querySelector('form');
+        if (!form) return;
+
         form.querySelector('[name="id"]').value = button.getAttribute('data-id');
         form.querySelector('[name="name"]').value = button.getAttribute('data-name');
         form.querySelector('[name="email"]').value = button.getAttribute('data-email');
@@ -212,6 +214,8 @@
 
     function resetForm() {
         const form = document.querySelector('form');
+        if (!form) return;
+
         form.reset();
         form.querySelector('[name="id"]').value = '';
         window.scrollTo({ top: 0, behavior: 'smooth' });

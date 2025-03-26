@@ -57,7 +57,7 @@
      th:text="${param.error[0]}"></div>
 
 <div class="info-section">
-  <p>Всего пользователей в системе: <strong th:text="${userCount}">0</strong></p>
+  <p>Всего пользователей в системе: <strong th:text="${userCount != null} ? ${userCount} : 0">0</strong></p>
 </div>
 
 <a th:href="@{/users}" class="btn">Перейти к управлению пользователями</a>

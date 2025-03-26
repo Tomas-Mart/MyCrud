@@ -29,7 +29,9 @@ public class UserService {
 
     @Transactional
     public void saveUser(User user) {
-        validateEmailUniqueness(user.getEmail());
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new IllegalStateException("Email уже используется");
+        }
         userRepository.save(user);
     }
 
@@ -37,8 +39,9 @@ public class UserService {
     public void updateUser(User user) {
         User existingUser = getUserById(user.getId());
 
-        if (!existingUser.getEmail().equals(user.getEmail())) {
-            validateEmailUniqueness(user.getEmail());
+        if (!existingUser.getEmail().equals(user.getEmail()) &&
+                userRepository.existsByEmail(user.getEmail())) {
+            throw new IllegalStateException("Email уже используется другим пользователем");
         }
 
         userRepository.update(user);
@@ -46,13 +49,9 @@ public class UserService {
 
     @Transactional
     public void deleteUser(Long id) {
-        User user = getUserById(id);
-        userRepository.delete(user.getId());
-    }
-
-    private void validateEmailUniqueness(String email) {
-        if (userRepository.findByEmail(email).isPresent()) {
-            throw new IllegalStateException("Email уже используется");
+        if (userRepository.findById(id).isEmpty()) {
+            throw new IllegalArgumentException("Пользователь не найден");
         }
+        userRepository.delete(id);
     }
 }
