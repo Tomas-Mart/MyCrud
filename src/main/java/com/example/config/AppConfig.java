@@ -42,18 +42,10 @@ public class AppConfig implements WebMvcConfigurer {
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(Objects.requireNonNull(
-                env.getProperty("spring.datasource.driver-class-name", "com.mysql.cj.jdbc.Driver")
-        ));
-        dataSource.setUrl(Objects.requireNonNull(
-                env.getProperty("spring.datasource.url", "jdbc:mysql://localhost:3306/mycrud")
-        ));
-        dataSource.setUsername(Objects.requireNonNull(
-                env.getProperty("spring.datasource.username", "root")
-        ));
-        dataSource.setPassword(Objects.requireNonNull(
-                env.getProperty("spring.datasource.password", "root")
-        ));
+        dataSource.setDriverClassName(Objects.requireNonNull(env.getProperty("spring.datasource.driver-class-name")));
+        dataSource.setUrl(Objects.requireNonNull(env.getProperty("spring.datasource.url")));
+        dataSource.setUsername(Objects.requireNonNull(env.getProperty("spring.datasource.username")));
+        dataSource.setPassword(Objects.requireNonNull(env.getProperty("spring.datasource.password")));
         return dataSource;
     }
 
@@ -65,16 +57,14 @@ public class AppConfig implements WebMvcConfigurer {
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 
         Properties properties = new Properties();
-        properties.put("hibernate.dialect",
-                env.getProperty("hibernate.dialect", "org.hibernate.dialect.MySQL8Dialect"));
-        properties.put("hibernate.hbm2ddl.auto",
-                env.getProperty("hibernate.hbm2ddl.auto", "update"));
-        properties.put("hibernate.show_sql",
-                env.getProperty("hibernate.show_sql", "true"));
-        properties.put("hibernate.format_sql", "true");
-        properties.put("hibernate.connection.charSet", "UTF-8");
-        properties.put("hibernate.connection.characterEncoding", "UTF-8");
-        properties.put("hibernate.connection.useUnicode", "true");
+        properties.put("hibernate.dialect", env.getProperty("hibernate.dialect"));
+        properties.put("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
+        properties.put("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
+        properties.put("hibernate.format_sql", env.getProperty("hibernate.format_sql"));
+
+        properties.put("hibernate.connection.charSet", env.getProperty("hibernate.connection.charSet"));
+        properties.put("hibernate.connection.characterEncoding", env.getProperty("hibernate.connection.characterEncoding"));
+        properties.put("hibernate.connection.useUnicode", env.getProperty("hibernate.connection.useUnicode"));
 
         em.setJpaProperties(properties);
         return em;
@@ -131,10 +121,8 @@ public class AppConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/resources/**")
-                .addResourceLocations("/resources/");
-        registry.addResourceHandler("/webjars/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/");
+        registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
+        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
     @Override
